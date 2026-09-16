@@ -2,6 +2,35 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+## 关于本修改版
+
+本仓库是 **mixin-ai 基于 [Eric Park 的 CodexIsland](https://github.com/ericjypark/codex-island) 修改的 Fork**，基线版本为 [v0.2.5](https://github.com/ericjypark/codex-island/tree/v0.2.5)，对应提交 [`1a0634d`](https://github.com/ericjypark/codex-island/commit/1a0634d2f86e0a9e74c7a7e35deb4de94360b737)。保留原项目历史、作者版权声明和 [MIT 许可证](LICENSE)。本修改版独立维护。
+
+### 修改内容
+
+- 左侧保留 Codex 用量，右侧**最多显示两条任务**，标注执行中、已结束、已中断或待确认，执行中的任务优先显示。
+- 保持原来的刘海宽度和高度。紧凑布局中的长名称使用省略号，最窄的收起状态只显示状态图标。
+- 新增**外圈流光**开关，默认关闭；也可关闭任务侧栏，恢复原来的服务显示。
+- 每三秒只读本地任务信息和生命周期事件，不修改 Codex 数据库及会话日志。长期没有更新的未结束任务显示为待确认；服务用量的轮询间隔保持原样。
+
+在设置中开启“始终显示用量”和任务侧栏，即可常驻显示两条任务。任务标签目前使用简体中文，任务识别依赖 Codex 本地数据库及日志格式。
+
+### 构建本修改版
+
+```sh
+git clone --branch task-sidebar https://github.com/mixin-ai/codex-island.git
+cd codex-island
+./build.sh
+codesign --force --sign - --timestamp=none build/CodexIsland.app
+open build/CodexIsland.app
+```
+
+需要 macOS 13+ 和 Xcode Command Line Tools。本修改版已在 Apple Silicon 上完成构建和界面验证，任务回归测试通过（`bash scripts/test-codex-tasks.sh`）。请在设置中关闭自动检查更新，以保留定制功能：继承的更新源仍指向原项目。下方 Homebrew 和 Releases 安装说明安装的是**原项目版本**。
+
+---
+
+## 原项目文档
+
 <p align="center">
   <img src="Assets/codexisland-logo.png" width="160" alt="CodexIsland logo">
 </p>

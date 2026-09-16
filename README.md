@@ -2,6 +2,35 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+## About this fork
+
+This is **mixin-ai's customized fork** of [CodexIsland by Eric Park](https://github.com/ericjypark/codex-island), based on [v0.2.5](https://github.com/ericjypark/codex-island/tree/v0.2.5) (commit [`1a0634d`](https://github.com/ericjypark/codex-island/commit/1a0634d2f86e0a9e74c7a7e35deb4de94360b737)). The original project's history, copyright notice, and [MIT license](LICENSE) are preserved. This fork is independently maintained.
+
+### Changes in this fork
+
+- Keep Codex usage on the left and show **up to two tasks** on the right, with running, ended, interrupted, or unknown status. Running tasks appear first.
+- Preserve the original notch width and height. Compact task names are shortened with an ellipsis; the smallest collapsed state shows status icons only.
+- Add an **outer glow** switch, disabled by default, and a switch to restore the original provider display.
+- Read task metadata and lifecycle events locally every three seconds without modifying Codex's database or session logs. Stale unfinished tasks show an unknown status. This does not change the provider usage polling interval.
+
+For the two task rows to stay visible, enable **Always show usage** and the task sidebar in Settings. Task labels are currently in Simplified Chinese. Task discovery depends on Codex's local database and log format.
+
+### Build this fork
+
+```sh
+git clone --branch task-sidebar https://github.com/mixin-ai/codex-island.git
+cd codex-island
+./build.sh
+codesign --force --sign - --timestamp=none build/CodexIsland.app
+open build/CodexIsland.app
+```
+
+Requires macOS 13+ and Xcode Command Line Tools. The customized app was built and checked on Apple Silicon; the task regression tests pass (`bash scripts/test-codex-tasks.sh`). Disable automatic update checks in Settings to keep this customization: the inherited update feed points to upstream releases. The Homebrew and release-download instructions below install the **original upstream app**.
+
+---
+
+## Original project documentation
+
 <p align="center">
   <img src="Assets/codexisland-logo.png" width="160" alt="CodexIsland logo">
 </p>
