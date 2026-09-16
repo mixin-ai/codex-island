@@ -256,7 +256,7 @@ struct SettingsView: View {
                     lowPower.enabled.toggle()
                 }
             }
-            SettingsRow(title: "右侧任务列表", subtitle: "最多显示 3 个 Codex 任务，执行中的优先。") {
+            SettingsRow(title: "右侧任务列表", subtitle: "最多显示 2 个 Codex 任务，长名称省略。") {
                 SettingsToggle(isOn: taskPreferences.enabled) { taskPreferences.enabled.toggle() }
                     .accessibilityLabel("右侧任务列表")
                     .accessibilityValue(taskPreferences.enabled ? "已开启" : "已关闭")

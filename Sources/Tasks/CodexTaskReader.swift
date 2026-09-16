@@ -27,7 +27,7 @@ struct CodexTaskItem: Identifiable, Equatable {
             }
             if $0.updatedAt != $1.updatedAt { return $0.updatedAt > $1.updatedAt }
             return $0.id < $1.id
-        }.prefix(3))
+        }.prefix(2))
     }
 }
 

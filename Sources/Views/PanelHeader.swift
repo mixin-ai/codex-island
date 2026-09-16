@@ -22,7 +22,7 @@ struct PanelHeader: View {
             title(showsTasks ? .codex : visibility.left, isLeft: true)
             Color.clear.frame(width: notch.width)
             if showsTasks {
-                Text("当前任务 · 最多 3 个")
+                Text("当前任务 · 最多 2 个")
                     .font(Typography.providerTitle)
                     .foregroundStyle(.white.opacity(0.8))
                     .frame(maxWidth: .infinity, alignment: .trailing)

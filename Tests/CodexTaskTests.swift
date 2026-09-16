@@ -36,7 +36,7 @@ struct CodexTaskTests {
             CodexTaskItem(id: "old", title: "较旧任务", status: .interrupted, updatedAt: now.addingTimeInterval(-10)),
             CodexTaskItem(id: "last", title: "最旧任务", status: .completed, updatedAt: now.addingTimeInterval(-30))
         ]
-        expect(CodexTaskItem.visible(sample).map(\.id) == ["run", "done", "old"], "running first, recent ended next, max three")
+        expect(CodexTaskItem.visible(sample).map(\.id) == ["run", "done"], "running first, recent ended next, max two")
 
         let home = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: home.appendingPathComponent("sessions"), withIntermediateDirectories: true)

@@ -84,11 +84,10 @@ struct IslandRootView: View {
                 }
                 .overlay(alignment: .topTrailing) {
                     if model.state != .expanded && taskPreferences.enabled {
-                        CodexTaskList(compact: true)
-                            .frame(width: model.tabWidth + model.pillSlotWidth - 24,
-                                   height: model.collapsedHeight - 6)
-                            .padding(.trailing, 12)
-                            .padding(.top, 3)
+                        CodexTaskList(compact: true, iconOnly: model.state == .compact)
+                            .frame(width: (model.state == .compact ? model.tabWidth : model.tabWidth + model.pillSlotWidth) - 16,
+                                   height: model.collapsedHeight)
+                            .padding(.trailing, 8)
                     } else if model.state != .expanded, let right = visibility.right {
                         ProviderMark(provider: right)
                             .padding(.trailing, logoEdgePadding)
@@ -342,7 +341,7 @@ struct IslandRootView: View {
     /// behavior; expanded panel layout depends on it).
     private var logoEdgePadding: CGFloat {
         switch model.state {
-        case .compact: return taskPreferences.enabled ? model.pillSlotWidth + 9 : 9
+        case .compact: return 9
         case .expanded: return 9
         case .peek:               return model.pillSlotWidth + 9
         }
