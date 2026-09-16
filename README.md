@@ -6,6 +6,12 @@
 
 This is **mixin-ai's customized fork** of [CodexIsland by Eric Park](https://github.com/ericjypark/codex-island), based on [v0.2.5](https://github.com/ericjypark/codex-island/tree/v0.2.5) (commit [`1a0634d`](https://github.com/ericjypark/codex-island/commit/1a0634d2f86e0a9e74c7a7e35deb4de94360b737)). The original project's history, copyright notice, and [MIT license](LICENSE) are preserved. This fork is independently maintained.
 
+### Preview
+
+![CodexIsland showing usage on the left and two shortened task names with running and ended statuses on the right](Assets/task-sidebar-preview.png)
+
+Actual appearance: usage and reset time on the left, two task rows on the right, with shortened names and status indicators. The original notch dimensions are preserved and the outer glow is off.
+
 ### Changes in this fork
 
 - Keep Codex usage on the left and show **up to two tasks** on the right, with running, ended, interrupted, or unknown status. Running tasks appear first.

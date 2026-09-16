@@ -6,6 +6,12 @@
 
 本仓库是 **mixin-ai 基于 [Eric Park 的 CodexIsland](https://github.com/ericjypark/codex-island) 修改的 Fork**，基线版本为 [v0.2.5](https://github.com/ericjypark/codex-island/tree/v0.2.5)，对应提交 [`1a0634d`](https://github.com/ericjypark/codex-island/commit/1a0634d2f86e0a9e74c7a7e35deb4de94360b737)。保留原项目历史、作者版权声明和 [MIT 许可证](LICENSE)。本修改版独立维护。
 
+### 实际效果
+
+![CodexIsland 左侧显示用量，右侧显示两条省略名称的任务及执行中、已结束状态](Assets/task-sidebar-preview.png)
+
+左侧显示用量和重置时间，右侧显示两条任务、简短名称和执行状态；保持原来的刘海尺寸，关闭外圈流光。
+
 ### 修改内容
 
 - 左侧保留 Codex 用量，右侧**最多显示两条任务**，标注执行中、已结束、已中断或待确认，执行中的任务优先显示。
