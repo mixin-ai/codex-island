@@ -8,14 +8,19 @@ struct UsageView: View {
     @ObservedObject private var store = UsageStore.shared
     @ObservedObject private var pref = StylePref.shared
     @ObservedObject private var visibility = ProviderVisibilityStore.shared
+    @ObservedObject private var taskPreferences = TaskSidebarPreferences.shared
 
     private var style: ChartStyle { pref.style }
 
     var body: some View {
         HStack(spacing: 0) {
-            providerBlock(visibility.left)
+            providerBlock(taskPreferences.enabled ? .codex : visibility.left)
             hairline
-            if let right = visibility.right {
+            if taskPreferences.enabled {
+                CodexTaskList()
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, IslandPanelLayout.columnInset)
+            } else if let right = visibility.right {
                 providerBlock(right)
             } else if let legacy = visibility.left.legacy {
                 PerModelBreakdown(provider: legacy, metric: .tokens)

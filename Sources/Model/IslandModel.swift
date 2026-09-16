@@ -33,7 +33,10 @@ final class IslandModel: ObservableObject {
     /// width during refresh. Grown symmetrically on both sides regardless
     /// of which provider is visible — keeps the silhouette balanced over
     /// the physical notch.
-    let pillSlotWidth: CGFloat = 96
+    var pillSlotWidth: CGFloat { showsTasks ? 192 : 96 }
+    private var showsTasks = TaskSidebarPreferences.shared.enabled
+
+    var collapsedHeight: CGFloat { showsTasks ? max(52, notch.height) : notch.height }
 
     /// Visible expanded panel width.
     private let expandedWidth: CGFloat = 800
@@ -54,6 +57,14 @@ final class IslandModel: ObservableObject {
         self.notch = Self.applyOverride(to: notch, width: IslandSpacingStore.shared.width)
         recomputeSize()
         subscribeToSpacingStore()
+        TaskSidebarPreferences.shared.$enabled
+            .dropFirst()
+            .sink { [weak self] enabled in
+                guard let self else { return }
+                self.showsTasks = enabled
+                self.recomputeSize()
+            }
+            .store(in: &subs)
     }
 
     func setState(_ new: State) {
@@ -142,13 +153,13 @@ final class IslandModel: ObservableObject {
         switch state {
         case .compact:
             size = CGSize(
-                width: notch.width + tabWidth * 2,
-                height: notch.height
+                width: notch.width + (showsTasks ? tabWidth + pillSlotWidth : tabWidth) * 2,
+                height: collapsedHeight
             )
         case .peek:
             size = CGSize(
                 width: notch.width + tabWidth * 2 + pillSlotWidth * 2,
-                height: notch.height
+                height: collapsedHeight
             )
         case .expanded:
             size = CGSize(

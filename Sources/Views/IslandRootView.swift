@@ -5,6 +5,7 @@ struct IslandRootView: View {
     @ObservedObject var model: IslandModel
     @ObservedObject private var visibility = ProviderVisibilityStore.shared
     @ObservedObject private var alwaysShow = AlwaysShowUsageStore.shared
+    @ObservedObject private var taskPreferences = TaskSidebarPreferences.shared
     @State private var hovering = false
     @State private var contentVisible = false
     @State private var pillsVisible = false
@@ -37,7 +38,7 @@ struct IslandRootView: View {
                             }
                         }
                 } else {
-                    Color.clear.frame(height: model.notch.height)
+                    Color.clear.frame(height: model.collapsedHeight)
                 }
             }
             .frame(width: model.size.width)
@@ -65,7 +66,7 @@ struct IslandRootView: View {
                     //
                     // Purely decorative, so Reduce Transparency drops it
                     // entirely — the solid black silhouette is the UI.
-                    if !reduceTransparency {
+                    if !reduceTransparency && taskPreferences.glowEnabled {
                         IslandShape()
                             .fill(.ultraThinMaterial)
                             .padding(-9)
@@ -76,13 +77,19 @@ struct IslandRootView: View {
                 }
                 .overlay(alignment: .topLeading) {
                     if model.state != .expanded {
-                        ProviderMark(provider: visibility.left)
+                        ProviderMark(provider: taskPreferences.enabled ? .codex : visibility.left)
                             .padding(.leading, logoEdgePadding)
-                            .padding(.top, max(0, (model.notch.height - 20) / 2))
+                            .padding(.top, max(0, (model.collapsedHeight - 20) / 2))
                     }
                 }
                 .overlay(alignment: .topTrailing) {
-                    if model.state != .expanded, let right = visibility.right {
+                    if model.state != .expanded && taskPreferences.enabled {
+                        CodexTaskList(compact: true)
+                            .frame(width: model.tabWidth + model.pillSlotWidth - 24,
+                                   height: model.collapsedHeight - 6)
+                            .padding(.trailing, 12)
+                            .padding(.top, 3)
+                    } else if model.state != .expanded, let right = visibility.right {
                         ProviderMark(provider: right)
                             .padding(.trailing, logoEdgePadding)
                             .padding(.top, max(0, (model.notch.height - 20) / 2))
@@ -90,12 +97,13 @@ struct IslandRootView: View {
                 }
                 .overlay(alignment: .topLeading) {
                     if model.state != .compact {
-                        PeekPillOverlay(provider: visibility.left, isLeft: true,
-                            topPadding: max(0, (model.notch.height - 14) / 2), pillsVisible: pillsVisible)
+                        PeekPillOverlay(provider: taskPreferences.enabled ? .codex : visibility.left, isLeft: true,
+                            topPadding: max(0, (model.collapsedHeight - 14) / 2), pillsVisible: pillsVisible,
+                            forceVisible: taskPreferences.enabled)
                     }
                 }
                 .overlay(alignment: .topTrailing) {
-                    if model.state != .compact, let right = visibility.right {
+                    if !taskPreferences.enabled, model.state != .compact, let right = visibility.right {
                         PeekPillOverlay(provider: right, isLeft: false,
                             topPadding: max(0, (model.notch.height - 14) / 2), pillsVisible: pillsVisible)
                     }
@@ -334,7 +342,8 @@ struct IslandRootView: View {
     /// behavior; expanded panel layout depends on it).
     private var logoEdgePadding: CGFloat {
         switch model.state {
-        case .compact, .expanded: return 9
+        case .compact: return taskPreferences.enabled ? model.pillSlotWidth + 9 : 9
+        case .expanded: return 9
         case .peek:               return model.pillSlotWidth + 9
         }
     }
@@ -354,11 +363,12 @@ private struct GlowLayer: View {
     @ObservedObject private var lowPower = LowPowerModeStore.shared
     @ObservedObject private var alerts = AlertEngine.shared
     @ObservedObject private var occlusion = WindowOcclusionStore.shared
+    @ObservedObject private var taskPreferences = TaskSidebarPreferences.shared
 
     var body: some View {
         ZStack {
             LoadingSweep(
-                active: !occlusion.isOccluded
+                active: taskPreferences.glowEnabled && !occlusion.isOccluded
                     && (lowPower.effectiveEnabled ? glowEventActive : true),
                 tint: glowColor
             )
@@ -378,7 +388,9 @@ private struct GlowLayer: View {
                 // ambient 0.35 the way it always has.
                 .shadow(
                     color: glowColor.opacity(
-                        lowPower.effectiveEnabled ? (glowEventActive ? 0.35 : 0) : 0.35
+                        taskPreferences.glowEnabled
+                            ? (lowPower.effectiveEnabled ? (glowEventActive ? 0.35 : 0) : 0.35)
+                            : 0
                     ),
                     radius: 14, y: 0
                 )
@@ -427,6 +439,7 @@ private struct PeekPillOverlay: View {
     let isLeft: Bool
     let topPadding: CGFloat
     let pillsVisible: Bool
+    var forceVisible = false
 
     @ObservedObject private var visibility = ProviderVisibilityStore.shared
     @ObservedObject private var connections = ProviderConnectionStore.shared
@@ -465,7 +478,7 @@ private struct PeekPillOverlay: View {
     }
 
     private var isVisible: Bool {
-        visibility.selected.contains(provider)
+        forceVisible || visibility.selected.contains(provider)
     }
 
     private var currentWindow: WindowUsage {

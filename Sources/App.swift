@@ -68,6 +68,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         CostStore.shared.startAutoRefresh()
         PricingCatalog.startAutoRefresh()
         CurrencyStore.shared.startAutoRefresh()
+        CodexTaskStore.shared.start()
 
         if offerWeeklyCard {
             let costs = CostStore.shared

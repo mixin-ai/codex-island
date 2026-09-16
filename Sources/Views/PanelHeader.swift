@@ -12,12 +12,21 @@ struct PanelHeader: View {
     @ObservedObject private var visibility = ProviderVisibilityStore.shared
     @ObservedObject private var usageStore = UsageStore.shared
     @ObservedObject private var connections = ProviderConnectionStore.shared
+    @ObservedObject private var taskPreferences = TaskSidebarPreferences.shared
+    @ObservedObject private var screen = ScreenPref.shared
+
+    private var showsTasks: Bool { taskPreferences.enabled && screen.screen == .usage }
 
     var body: some View {
         HStack(spacing: 0) {
-            title(visibility.left, isLeft: true)
+            title(showsTasks ? .codex : visibility.left, isLeft: true)
             Color.clear.frame(width: notch.width)
-            if let right = visibility.right {
+            if showsTasks {
+                Text("当前任务 · 最多 3 个")
+                    .font(Typography.providerTitle)
+                    .foregroundStyle(.white.opacity(0.8))
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            } else if let right = visibility.right {
                 title(right, isLeft: false)
             } else {
                 Color.clear.frame(maxWidth: .infinity)

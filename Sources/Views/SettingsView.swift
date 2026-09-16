@@ -24,6 +24,7 @@ struct SettingsView: View {
     @ObservedObject private var cost = CostStore.shared
     @ObservedObject private var currencyStore = CurrencyStore.shared
     @ObservedObject private var updater = UpdaterController.shared
+    @ObservedObject private var taskPreferences = TaskSidebarPreferences.shared
 
     @AppStorage("Settings.activeTab") private var activeTabRaw: String = SettingsTab.general.rawValue
     @State private var recoveryPresented = false
@@ -254,6 +255,16 @@ struct SettingsView: View {
                 SettingsToggle(isOn: lowPower.enabled) {
                     lowPower.enabled.toggle()
                 }
+            }
+            SettingsRow(title: "右侧任务列表", subtitle: "最多显示 3 个 Codex 任务，执行中的优先。") {
+                SettingsToggle(isOn: taskPreferences.enabled) { taskPreferences.enabled.toggle() }
+                    .accessibilityLabel("右侧任务列表")
+                    .accessibilityValue(taskPreferences.enabled ? "已开启" : "已关闭")
+            }
+            SettingsRow(title: "外圈流光", subtitle: "关闭后，悬停和刷新时也不显示流光。") {
+                SettingsToggle(isOn: taskPreferences.glowEnabled) { taskPreferences.glowEnabled.toggle() }
+                    .accessibilityLabel("外圈流光")
+                    .accessibilityValue(taskPreferences.glowEnabled ? "已开启" : "已关闭")
             }
         }
         .padding(.horizontal, 14)
